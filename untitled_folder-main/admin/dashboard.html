@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - CivicPulse</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Theme initialization
+    (function(){
+      try {
+        var theme = localStorage.getItem('theme');
+        if (!theme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          theme = 'dark';
+        }
+        if (theme === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch(e) {}
+    })();
+  </script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="site-header">
+      <div class="header-left">
+        <a href="../index.html" class="back-link">
+          <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1 class="site-title">
+          <i class="fas fa-vote-yea"></i>
+          CivicPulse Admin
+        </h1>
+      </div>
+      
+      <div class="site-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+          <input type="checkbox" id="themeToggleCheckbox" aria-hidden="true">
+          <span class="theme-slider"></span>
+        </button>
+      </div>
+    </header>
+
+    <main class="main-content" id="main-content">
+      <div class="dashboard-header">
+        <h1>Admin Dashboard</h1>
+        <p>Monitor and manage your community platform</p>
+      </div>
+
+      <!-- Statistics Cards -->
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number" id="totalUsers">-</div>
+            <div class="stat-label">Total Users</div>
+            <div class="stat-growth" id="usersGrowth">
+              <i class="fas fa-arrow-up"></i>
+              <span id="usersGrowthText">-</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-user-check"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number" id="activeUsers">-</div>
+            <div class="stat-label">Active Users</div>
+            <div class="stat-growth">
+              <i class="fas fa-circle"></i>
+              <span id="activePercentage">-</span>% active
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number" id="totalIssues">-</div>
+            <div class="stat-label">Total Issues</div>
+            <div class="stat-growth" id="issuesGrowth">
+              <i class="fas fa-arrow-up"></i>
+              <span id="issuesGrowthText">-</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-vote-yea"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number" id="totalVotes">-</div>
+            <div class="stat-label">Total Votes</div>
+            <div class="stat-growth" id="votesGrowth">
+              <i class="fas fa-arrow-up"></i>
+              <span id="votesGrowthText">-</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-flag"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number" id="flaggedContent">-</div>
+            <div class="stat-label">Flagged Content</div>
+            <div class="stat-growth">
+              <i class="fas fa-exclamation-triangle"></i>
+              Needs attention
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number" id="openIssues">-</div>
+            <div class="stat-label">Open Issues</div>
+            <div class="stat-growth">
+              <i class="fas fa-clock"></i>
+              Pending resolution
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Moderation Section -->
+      <section class="moderation-section">
+        <h2>Moderation</h2>
+        <div class="moderation-grid">
+          <div class="moderation-card">
+            <h3>Recent Issues</h3>
+            <div class="moderation-list" id="recentIssues">
+              <!-- Recent issues will be loaded here -->
+            </div>
+          </div>
+
+          <div class="moderation-card">
+            <h3>Recent Comments</h3>
+            <div class="moderation-list" id="recentComments">
+              <!-- Recent comments will be loaded here -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Analytics Section -->
+      <section class="analytics-section">
+        <h2>Analytics</h2>
+        <div class="analytics-grid">
+          <div class="analytics-card">
+            <h3>Trending Issues</h3>
+            <div class="trending-list" id="trendingIssues">
+              <!-- Trending issues will be loaded here -->
+            </div>
+          </div>
+
+          <div class="analytics-card">
+            <h3>User Activity</h3>
+            <div class="analytics-content" id="userActivity">
+              <!-- User activity will be loaded here -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Charts Section -->
+      <section class="chart-section">
+        <h2>Growth Trends</h2>
+        <div class="chart-grid">
+          <div class="chart-card">
+            <h3>User Growth</h3>
+            <div class="chart-container">
+              <canvas id="userGrowthChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <h3>Issue Activity</h3>
+            <div class="chart-container">
+              <canvas id="issueActivityChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script>
+    // Admin Dashboard Integration
+    document.addEventListener('DOMContentLoaded', function() {
+      loadDashboardStatistics();
+      loadPendingApplications();
+      loadRecentIssues();
+      setupCharts();
+    });
+
+    // Load dashboard statistics
+    async function loadDashboardStatistics() {
+      try {
+        const response = await fetch('../api/admin/statistics.php');
+        const data = await response.json();
+        
+        if (data.success) {
+          const stats = data.data;
+          
+          // Update statistics cards
+          document.getElementById('totalUsers').textContent = stats.total_users;
+          document.getElementById('activeUsers').textContent = stats.active_users_30_days;
+          document.getElementById('totalIssues').textContent = stats.total_issues;
+          document.getElementById('totalVotes').textContent = stats.total_votes;
+          document.getElementById('openIssues').textContent = stats.open_issues;
+          
+          // Update growth percentages
+          document.getElementById('usersGrowthText').textContent = stats.user_growth_30_days + '%';
+          document.getElementById('issuesGrowthText').textContent = stats.issue_growth_30_days + '%';
+          document.getElementById('votesGrowthText').textContent = stats.vote_growth_30_days + '%';
+          
+          // Update active percentage
+          document.getElementById('activePercentage').textContent = stats.user_engagement_rate;
+          
+          // Update averages
+          const avgVotesElement = document.querySelector('#totalVotes .stat-growth span');
+          if (avgVotesElement) {
+            avgVotesElement.textContent = stats.avg_votes_per_issue;
+          }
+          
+          // Update flagged content (placeholder)
+          document.getElementById('flaggedContent').textContent = '0';
+          
+        }
+      } catch (error) {
+        console.error('Failed to load dashboard statistics:', error);
+      }
+    }
+
+    // Load pending applications
+    async function loadPendingApplications() {
+      try {
+        const response = await fetch('../api/admin/user_management.php?status=pending&limit=5');
+        const data = await response.json();
+        
+        if (data.success && data.data.length > 0) {
+          const container = document.getElementById('pendingApplications');
+          container.innerHTML = data.data.map(app => `
+            <div class="application-card">
+              <div class="app-header">
+                <h4>${app.first_name} ${app.last_name}</h4>
+                <span class="app-status pending">Pending</span>
+              </div>
+              <div class="app-details">
+                <p><strong>Email:</strong> ${app.email}</p>
+                <p><strong>City:</strong> ${app.city_name || 'Not specified'}</p>
+                <p><strong>Document:</strong> ${app.document_type}</p>
+                <p><strong>Profile Completion:</strong> ${app.profile_completion_percentage}%</p>
+                <p><strong>Submitted:</strong> ${new Date(app.created_at).toLocaleDateString()}</p>
+              </div>
+              <div class="app-actions">
+                <button class="btn btn-success btn-sm" onclick="approveApplication(${app.id})">
+                  <i class="fas fa-check"></i> Approve
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="rejectApplication(${app.id})">
+                  <i class="fas fa-times"></i> Reject
+                </button>
+                <button class="btn btn-info btn-sm" onclick="viewApplication(${app.id})">
+                  <i class="fas fa-eye"></i> View
+                </button>
+              </div>
+            </div>
+          `).join('');
+        } else {
+          document.getElementById('pendingApplications').innerHTML = '<p class="text-muted">No pending applications</p>';
+        }
+      } catch (error) {
+        console.error('Failed to load pending applications:', error);
+      }
+    }
+
+    // Load recent issues
+    async function loadRecentIssues() {
+      try {
+        const response = await fetch('../api/admin/statistics.php');
+        const data = await response.json();
+        
+        if (data.success && data.data.recent_issues.length > 0) {
+          const container = document.getElementById('recentIssues');
+          container.innerHTML = data.data.recent_issues.map(issue => `
+            <div class="issue-card">
+              <div class="issue-header">
+                <h4>${issue.title}</h4>
+                <span class="issue-priority ${issue.priority}">${issue.priority}</span>
+              </div>
+              <div class="issue-details">
+                <p><strong>Category:</strong> ${issue.category}</p>
+                <p><strong>Author:</strong> ${issue.author_name}</p>
+                <p><strong>City:</strong> ${issue.city_name}</p>
+                <p><strong>Votes:</strong> ${issue.votes_count}</p>
+                <p><strong>Created:</strong> ${new Date(issue.created_at).toLocaleDateString()}</p>
+              </div>
+              <div class="issue-actions">
+                <button class="btn btn-primary btn-sm" onclick="viewIssue(${issue.id})">
+                  <i class="fas fa-eye"></i> View
+                </button>
+                <button class="btn btn-warning btn-sm" onclick="flagIssue(${issue.id})">
+                  <i class="fas fa-flag"></i> Flag
+                </button>
+              </div>
+            </div>
+          `).join('');
+        } else {
+          document.getElementById('recentIssues').innerHTML = '<p class="text-muted">No recent issues</p>';
+        }
+      } catch (error) {
+        console.error('Failed to load recent issues:', error);
+      }
+    }
+
+    // Setup charts
+    function setupCharts() {
+      // User Growth Chart
+      const userCtx = document.getElementById('userGrowthChart');
+      if (userCtx) {
+        new Chart(userCtx, {
+          type: 'line',
+          data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+              label: 'User Registrations',
+              data: [12, 19, 3, 5, 2, 3],
+              borderColor: 'rgb(75, 192, 192)',
+              tension: 0.1
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      }
+
+      // Issue Activity Chart
+      const issueCtx = document.getElementById('issueActivityChart');
+      if (issueCtx) {
+        new Chart(issueCtx, {
+          type: 'bar',
+          data: {
+            labels: ['Infrastructure', 'Safety', 'Environment', 'Transportation', 'Other'],
+            datasets: [{
+              label: 'Issues by Category',
+              data: [12, 19, 3, 5, 2],
+              backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 205, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)'
+              ],
+              borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 205, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)'
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      }
+    }
+
+    // Application approval function
+    async function approveApplication(applicationId) {
+      if (!confirm('Are you sure you want to approve this application?')) {
+        return;
+      }
+      
+      try {
+        const response = await fetch('../api/admin/user_management.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            action: 'approve',
+            application_id: applicationId,
+            admin_notes: 'Application approved by admin'
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          alert('Application approved successfully! Special Login ID: ' + result.special_login_id);
+          loadPendingApplications(); // Refresh the list
+          loadDashboardStatistics(); // Refresh statistics
+        } else {
+          alert('Failed to approve application: ' + result.message);
+        }
+      } catch (error) {
+        console.error('Failed to approve application:', error);
+        alert('An error occurred while approving the application');
+      }
+    }
+
+    // Application rejection function
+    async function rejectApplication(applicationId) {
+      const reason = prompt('Please provide a reason for rejection:');
+      if (!reason) return;
+      
+      try {
+        const response = await fetch('../api/admin/user_management.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            action: 'reject',
+            application_id: applicationId,
+            admin_notes: reason
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          alert('Application rejected successfully');
+          loadPendingApplications(); // Refresh the list
+          loadDashboardStatistics(); // Refresh statistics
+        } else {
+          alert('Failed to reject application: ' + result.message);
+        }
+      } catch (error) {
+        console.error('Failed to reject application:', error);
+        alert('An error occurred while rejecting the application');
+      }
+    }
+
+    // View application function
+    function viewApplication(applicationId) {
+      // This would open a modal or navigate to a detailed view
+      alert('View application ' + applicationId + ' - Feature to be implemented');
+    }
+
+    // View issue function
+    function viewIssue(issueId) {
+      // This would open a modal or navigate to a detailed view
+      alert('View issue ' + issueId + ' - Feature to be implemented');
+    }
+
+    // Flag issue function
+    function flagIssue(issueId) {
+      // This would open a modal to add flag reason
+      alert('Flag issue ' + issueId + ' - Feature to be implemented');
+    }
+  </script>
+</body>
+</html>

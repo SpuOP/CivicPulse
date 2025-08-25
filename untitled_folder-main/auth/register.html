@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - CivicPulse</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <script>
+    // Theme initialization
+    (function(){
+      try {
+        var theme = localStorage.getItem('theme');
+        if (!theme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          theme = 'dark';
+        }
+        if (theme === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch(e) {}
+    })();
+  </script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="site-header">
+      <div class="header-left">
+        <a href="../index.html" class="back-link">
+          <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1 class="site-title">
+          <i class="fas fa-vote-yea"></i>
+          CivicPulse
+        </h1>
+      </div>
+      
+      <div class="site-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+          <input type="checkbox" id="themeToggleCheckbox" aria-hidden="true">
+          <span class="theme-slider"></span>
+        </button>
+      </div>
+    </header>
+
+    <main class="main-content" id="main-content">
+      <div class="auth-container">
+        <div class="auth-card">
+          <div class="auth-header">
+            <div class="auth-icon">
+              <i class="fas fa-user-plus"></i>
+            </div>
+            <h2>Join CivicPulse</h2>
+            <p>Create your account to start participating</p>
+          </div>
+
+          <form id="registerForm" class="auth-form">
+            <div class="form-group">
+              <label for="username" class="form-label">Username</label>
+              <input type="text" id="username" name="username" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+              <label for="email" class="form-label">Email Address</label>
+              <input type="email" id="email" name="email" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+              <label for="confirm_password" class="form-label">Confirm Password</label>
+              <input type="password" id="confirm_password" name="confirm_password" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary btn-lg w-100">
+                <i class="fas fa-user-plus"></i> Create Account
+              </button>
+            </div>
+          </form>
+
+          <div class="auth-footer">
+            <p>Already have an account? <a href="login.html">Sign in here</a></p>
+            <a href="../index.html" class="back-link">
+              <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/auth.js"></script>
+</body>
+</html>
